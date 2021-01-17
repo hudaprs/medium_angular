@@ -1,0 +1,13 @@
+<form class="flex justify-center items-center mt-4" (ngSubmit)="onSubmit()">
+  <input
+    [(ngModel)]="title"
+    type="text"
+    name="title"
+    class="input"
+    placeholder="Things you wanna do..."
+    [disabled]="isLoading"
+  />
+  <button type="submit" class="btn" [disabled]="isLoading">
+    {{ isLoading ? "Saving..." : "Save" }}
+  </button>
+</form>
