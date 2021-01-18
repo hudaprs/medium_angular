@@ -10,6 +10,9 @@ import { TodoService } from '../../services/todo.service';
 })
 export class TodoCreateComponent {
   isLoading: boolean = false;
+
+  // This state come from two ways binding from [(ngModel)]="title" in the HTML
+  // You must import FormsModule at app.module.ts from @angular/forms to start working with this.
   title: string = '';
 
   constructor(private todoService: TodoService) {}

@@ -1,18 +1,27 @@
 import { Injectable } from '@angular/core';
 
 // Import RxJs for handle async request to server
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import {
+  Observable, // It's just like a promise base thing, if use this, you will return kind of promise things.
+  BehaviorSubject, // Just like wathing some value, that return Observable that you must subscribe to use it
+  throwError, // Throwing error to client side or component in this case
+} from 'rxjs';
 
 // Import operators RxJs, to interact with data that we receive form server
-import { map, catchError } from 'rxjs/operators';
+import {
+  map, // function that for mapping data from server
+  catchError, // function hat for catching an error from server
+} from 'rxjs/operators';
 
 // Import HTTP for interact with server
-import { HttpClient } from '@angular/common/http';
+import {
+  HttpClient, // module that used for interact with the server (Must import HttpClientModule to your entrypoint to use this)
+} from '@angular/common/http';
 
 // Import your model
 import { Todo } from '../models/todo.model';
 
-// Create interface for todo
+// Create interface for our todo, it's for represent data that we gonna receive
 interface TodoInterface {
   id: number;
   title: string;
@@ -77,6 +86,7 @@ export class TodoService {
       .pipe(
         // Map data again just like the getTodos method
         map((todo: Todo) => {
+          // Delete userId, we don't need'em
           delete todo.userId;
 
           // Update the todos state
@@ -102,7 +112,7 @@ export class TodoService {
       // Map data again just like the getTodos method
       map((_): void => {
         // Update the todos state
-        // Filter out the existed todos
+        // Filter out the existed todos to deleting the choosed one
         this.todos.next(
           this.todos
             .getValue()

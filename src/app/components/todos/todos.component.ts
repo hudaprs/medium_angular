@@ -1,39 +1,48 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component, // Component module from angular
+  OnInit, // Lifecycle that angular have, run when component initialized
+  OnDestroy, // Lifecycle that angular have, run when component unmounted / leaving the component
+} from '@angular/core';
 
 // Import Subscription from rxjs.
 // It's for watching any async request, and you can make that async request canceled.
 // It's good for performance purpose.
 // When you have case, that if user leaving this todo page, you want to cancel any previous async request.
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 // Import switch map from rxjs/operators for re-subscribe for watching the state
-import { switchMap } from 'rxjs/operators';
+import {
+  switchMap, // switchMap used for switching the first observable and run the next observable that inside switch map
+} from 'rxjs/operators';
 
-// Get the todo service
+// Import the todo service
 import { TodoService } from '../../services/todo.service';
 
-// Get the todo model
+// Import the todo model
 import { Todo } from '../../models/todo.model';
 
 @Component({
-  selector: 'app-todos',
-  templateUrl: './todos.component.html',
-  styleUrls: ['./todos.component.css'],
+  selector: 'app-todos', // selector that generate html (<app-todos></app-todos>)
+  templateUrl: './todos.component.html', // Reference to your html
+  styleUrls: ['./todos.component.css'], // Reference to your styles
 })
 export class TodosComponent implements OnInit, OnDestroy {
+  // Define your states here
   isLoading: boolean;
   todos: Todo[] = [];
   todoSubscription: Subscription;
 
+  // Inject your TodoService or any other service here
   constructor(private todoService: TodoService) {}
 
   ngOnInit(): void {
     this.isLoading = true;
     // It's just like promise base right?
-    // The different is at the name, it's using subscribe() than then() (the Promise)
+    // The different is at the name, it's using subscribe() than then() (Promise)
+    // And assign to todoSubscription, for performance purpose
     this.todoSubscription = this.todoService
       .getTodos()
-      .pipe(switchMap(() => this.todoService.todos))
+      .pipe(switchMap(() => this.todoService.todos)) // Also subscribe to todos BehaviorSubject using switch map after getTodos completed, for the purpose to update the state
       .subscribe(
         (todos): void => {
           this.todos = todos;
@@ -51,15 +60,10 @@ export class TodosComponent implements OnInit, OnDestroy {
       );
   }
 
-  makeTodo(title: string): Observable<any> {
-    return this.todoService.createTodo(title);
-  }
-
   removeTodo(todoId: number): void {
     this.isLoading = true;
     this.todoService.deleteTodo(todoId).subscribe(
       (_) => {
-        console.log('SUCCESS');
         this.isLoading = false;
       },
       (err) => {
